@@ -1,11 +1,8 @@
-import React from 'react';
+import React from "react";
+import Input from "./components/Input";
 
 const App = () => {
-  return (
-    <div className="App">
-      123
-    </div>
-  );
-}
+	return <Input />;
+};
 
 export default App;
