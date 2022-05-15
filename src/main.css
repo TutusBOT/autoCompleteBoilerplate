@@ -1,0 +1,47 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	height: 100vh;
+	display: grid;
+	justify-content: center;
+}
+
+.form {
+	width: 30rem;
+	height: fit-content;
+	margin-top: 3rem;
+}
+
+.form * {
+	font-size: 2rem;
+	width: 30rem;
+}
+
+.input {
+	border-radius: 1rem 1rem 0 0;
+	padding-left: 0.25em;
+}
+
+.autocomplete {
+	/* position: relative; */
+	border-radius: 0 0 1rem 1rem;
+	list-style: none;
+	overflow: hidden;
+}
+
+.autocomplete > li {
+	border-radius: 0;
+	padding-left: 0.25em;
+}
+
+.autocomplete > li:hover {
+	background-color: aqua;
+}
+
+.autocomplete-active {
+	background-color: red;
+}
