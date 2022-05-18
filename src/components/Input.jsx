@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import store from "../redux/store";
 import { getUsers } from "../redux/users";
+import AutoComplete from "./AutoComplete";
 
 function Input() {
 	// const [users, setUsers] = useState(initialState);
@@ -68,9 +69,6 @@ function Input() {
 
 	useEffect(() => {
 		if (!autoCompleteList.current.children.length) return;
-		console.log(autoCompleteHighlight, autoComplete.length);
-		console.log(autoCompleteList.current.children);
-
 		for (const li of autoCompleteList.current.children) {
 			li.classList.remove("autocomplete-active");
 		}
@@ -98,24 +96,14 @@ function Input() {
 				{autoComplete
 					? autoComplete.map(({ name }) => {
 							return (
-								<li
-									className={"autocomplete"}
-									onClick={() => {
-										setInputValue(name);
-										setAutoCompleteHighlight(-1);
-									}}
+								<AutoComplete
+									name={name}
+									setInputValue={setInputValue}
 									key={name}
-								>
-									{name}
-								</li>
-								// <AutoComplete
-								// 	name={name}
-								// 	setInputValue={setInputValue}
-								// 	key={name}
-								// />
+								/>
 							);
 					  })
-					: ""}
+					: null}
 			</ul>
 		</form>
 	);

@@ -1,6 +1,6 @@
 import React from "react";
 
-function AutoComplete({ name }, setInputValue) {
+function AutoComplete({ name, setInputValue }) {
 	return (
 		<li
 			onClick={() => {

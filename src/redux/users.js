@@ -33,14 +33,3 @@ export const getUsers = () => {
 		);
 	};
 };
-
-// import Axios from "axios";
-
-// const fetchUsers = () => {
-// 	return async (dispatch) => {
-// 		Axios.get("https://jsonplaceholder.typicode.com/users").then(
-//             users => dispatch('', users),
-//             error =>
-//         ).catch();
-// 	};
-// };
