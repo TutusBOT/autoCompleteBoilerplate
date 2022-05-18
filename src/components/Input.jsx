@@ -20,11 +20,14 @@ function Input() {
 	useEffect(() => {
 		if (users.error) console.log(users.error);
 		if (!users.data || !inputValue) return setAutoComplete([]);
+		const matchingInput = new RegExp(`^${inputValue}`, "i");
 		setAutoComplete(
 			users.data.filter(({ name }) => {
+				console.log(matchingInput.test(name));
 				return (
-					name.toLowerCase().includes(inputValue.toLowerCase()) &&
-					name !== inputValue
+					// name.toLowerCase().includes(inputValue.toLowerCase()) &&
+					// name !== inputValue
+					matchingInput.test(name) && name !== inputValue
 				);
 			})
 		);
