@@ -1,3 +1,7 @@
+:root {
+	--highlight: aqua;
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -12,7 +16,6 @@ body {
 
 .form {
 	width: 30rem;
-	height: fit-content;
 	margin-top: 3rem;
 }
 
@@ -31,6 +34,7 @@ body {
 	border-radius: 0 0 0.5rem 0.5rem;
 	list-style: none;
 	overflow: hidden;
+	border-inline: 1px solid black;
 }
 
 .autocomplete > li {
@@ -40,5 +44,5 @@ body {
 
 .autocomplete > li:hover,
 .autocomplete-active {
-	background-color: aqua;
+	background-color: var(--highlight);
 }
