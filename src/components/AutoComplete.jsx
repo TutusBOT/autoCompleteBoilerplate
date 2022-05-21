@@ -1,12 +1,14 @@
 import React from "react";
 
-function AutoComplete({ name, setInputValue }) {
+function AutoComplete({ name, setInputValue, nameToHighlight }) {
 	return (
 		<li
 			onClick={() => {
 				setInputValue(name);
 			}}
-			className="autocomplete"
+			className={`autocomplete ${
+				name === nameToHighlight ? "autocomplete-active" : ""
+			}`}
 		>
 			{name}
 		</li>
