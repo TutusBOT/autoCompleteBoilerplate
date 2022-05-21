@@ -1,0 +1,18 @@
+.form {
+	width: 30rem;
+	margin-top: 3rem;
+}
+
+.form * {
+	font-size: 2rem;
+	width: 30rem;
+}
+
+.input {
+	padding-left: 0.25em;
+}
+
+.autocomplete {
+	list-style: none;
+	border-inline: 2px solid black;
+}
