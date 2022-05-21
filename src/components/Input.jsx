@@ -93,7 +93,7 @@ function Input() {
 				placeholder="User"
 			/>
 
-			<ul className={hide ? "hide" : ""}>
+			<ul className={"autocomplete " + (hide ? "hide" : "")}>
 				{autoComplete
 					? autoComplete.map(({ name }) => {
 							return (

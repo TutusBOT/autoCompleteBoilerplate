@@ -25,16 +25,12 @@ body {
 }
 
 .input {
-	border-radius: 0.5rem 0.5rem 0 0;
 	padding-left: 0.25em;
 }
 
 .autocomplete {
-	/* position: relative; */
-	border-radius: 0 0 0.5rem 0.5rem;
 	list-style: none;
-	overflow: hidden;
-	border-inline: 1px solid black;
+	border-inline: 2px solid black;
 }
 
 .autocomplete > li {
@@ -45,4 +41,8 @@ body {
 .autocomplete > li:hover,
 .autocomplete-active {
 	background-color: var(--highlight);
+}
+
+.hide {
+	display: none;
 }

@@ -6,9 +6,7 @@ function AutoComplete({ name, setInputValue, nameToHighlight }) {
 			onClick={() => {
 				setInputValue(name);
 			}}
-			className={`autocomplete ${
-				name === nameToHighlight ? "autocomplete-active" : ""
-			}`}
+			className={name === nameToHighlight ? "autocomplete-active" : ""}
 		>
 			{name}
 		</li>
