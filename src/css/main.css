@@ -13,4 +13,5 @@ body {
 	height: 100vh;
 	display: grid;
 	justify-content: center;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }

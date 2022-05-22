@@ -1,6 +1,7 @@
 .option {
 	cursor: pointer;
 	padding-left: 0.25em;
+	padding-block: 0.125em;
 	border-inline: 1px solid black;
 	border-bottom: 1px solid black;
 }
