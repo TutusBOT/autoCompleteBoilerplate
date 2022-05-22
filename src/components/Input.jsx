@@ -42,23 +42,23 @@ function Input() {
 				return setAutoCompleteSelected({ index: 0, selected: false });
 			}
 			case "up": {
-				if (autoCompleteSelected.index === 0) {
-					return setAutoCompleteSelected({
-						index: autoComplete.length - 1,
-						selected: true,
-					});
-				}
-				return setAutoCompleteSelected(({ index }) => {
-					return { index: index - 1, selected: true };
-				});
+				return setAutoCompleteSelected(({ index }) => ({
+					index:
+						autoCompleteSelected.index === 0
+							? autoComplete.length - 1
+							: index - 1,
+					selected: true,
+				}));
 			}
 			case "down": {
-				if (autoCompleteSelected.index === autoComplete.length - 1) {
-					return setAutoCompleteSelected({ index: 0, selected: true });
-				}
-				return setAutoCompleteSelected(({ index }) => {
-					return { index: index + 1, selected: true };
-				});
+				return setAutoCompleteSelected(({ index }) => ({
+					index:
+						autoCompleteSelected.index === autoComplete.length - 1 ||
+						!autoCompleteSelected.selected
+							? 0
+							: index + 1,
+					selected: true,
+				}));
 			}
 			default: {
 				return;
@@ -110,6 +110,7 @@ function Input() {
 								name={name}
 								setInputValue={setInputValue}
 								isHighlighted={
+									autoCompleteSelected.selected &&
 									autoComplete[autoCompleteSelected.index].name === name
 										? true
 										: false
