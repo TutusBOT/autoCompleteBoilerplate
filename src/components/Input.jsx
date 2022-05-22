@@ -7,7 +7,10 @@ import styles from "../css/input.module.css";
 function Input() {
 	const [inputValue, setInputValue] = useState("");
 	const [autoComplete, setAutoComplete] = useState([]);
-	const [autoCompleteHighlight, setAutoCompleteHighlight] = useState(-1);
+	const [autoCompleteHighlight, setAutoCompleteHighlight] = useState({
+		index: 0,
+		selected: false,
+	});
 	const [autoCompleteSelected, setAutoCompleteSelected] = useState("");
 	const [hide, setHide] = useState(false);
 	const users = useSelector((state) => state.users);
@@ -34,25 +37,32 @@ function Input() {
 	const defineHighlight = (action) => {
 		switch (action) {
 			case "reset": {
-				setInputValue(autoComplete[autoCompleteHighlight].name);
-				setAutoCompleteHighlight(-1);
+				setInputValue(autoComplete[autoCompleteHighlight.index].name);
+				setAutoCompleteHighlight({ index: 0, selected: false });
 				setAutoCompleteSelected("");
 				break;
 			}
 			case "up": {
-				if (autoCompleteHighlight < 1) {
-					setAutoCompleteHighlight(autoComplete.length - 1);
+				if (autoCompleteHighlight.index === 0) {
+					setAutoCompleteHighlight({
+						index: autoComplete.length - 1,
+						selected: true,
+					});
 					break;
 				}
-				setAutoCompleteHighlight((prev) => prev - 1);
+				setAutoCompleteHighlight(({ index }) => {
+					return { index: index - 1, selected: true };
+				});
 				break;
 			}
 			case "down": {
-				if (autoCompleteHighlight === autoComplete.length - 1) {
-					setAutoCompleteHighlight(0);
+				if (autoCompleteHighlight.index === autoComplete.length - 1) {
+					setAutoCompleteHighlight({ index: 0, selected: true });
 					break;
 				}
-				setAutoCompleteHighlight((prev) => prev + 1);
+				setAutoCompleteHighlight(({ index }) => {
+					return { index: index + 1, selected: true };
+				});
 				break;
 			}
 			default: {
@@ -69,36 +79,17 @@ function Input() {
 			case "ArrowUp":
 				return defineHighlight("up");
 			case "Enter": {
-				if (autoCompleteHighlight === -1) return;
+				if (autoCompleteHighlight.selected === false) return;
 				return defineHighlight("reset");
 			}
 			default:
 				return;
 		}
-		// if (e.key === "ArrowDown") {
-		// 	if (autoCompleteHighlight === autoComplete.length - 1) {
-		// 		return setAutoCompleteHighlight(0);
-		// 	}
-		// 	return setAutoCompleteHighlight((prev) => prev + 1);
-		// }
-		// if (e.key === "ArrowUp") {
-		// 	if (autoCompleteHighlight === 0 || autoCompleteHighlight === -1) {
-		// 		return setAutoCompleteHighlight(autoComplete.length - 1);
-		// 	}
-		// 	return setAutoCompleteHighlight((prev) => prev - 1);
-		// }
-		// if (e.key === "Enter") {
-		// 	if (autoCompleteHighlight !== -1) {
-		// 		setInputValue(autoComplete[autoCompleteHighlight].name);
-		// 		setAutoCompleteSelected("");
-		// 		return setAutoCompleteHighlight(-1);
-		// 	}
-		// }
 	};
 
 	useEffect(() => {
-		if (autoComplete.length && autoCompleteHighlight !== -1) {
-			setAutoCompleteSelected(autoComplete[autoCompleteHighlight].name);
+		if (autoComplete.length && autoCompleteHighlight.selected) {
+			setAutoCompleteSelected(autoComplete[autoCompleteHighlight.index].name);
 		}
 	}, [autoCompleteHighlight]);
 
@@ -107,12 +98,8 @@ function Input() {
 			className={styles.form}
 			onSubmit={(e) => e.preventDefault()}
 			autoComplete="off"
-			onBlur={(e) => {
-				console.log(e.target, e.currentTarget);
-				if (!e.currentTarget.contains(e.relatedTarget)) {
-					// setTimeout(() => setHide(true), 1000);
-					setHide(true);
-				}
+			onBlur={() => {
+				setTimeout(() => setHide(true), 100);
 			}}
 		>
 			<input
