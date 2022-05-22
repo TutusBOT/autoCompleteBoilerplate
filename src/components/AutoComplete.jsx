@@ -7,9 +7,7 @@ function AutoComplete({ name, setInputValue, isHighlighted }) {
 			onClick={() => {
 				setInputValue(name);
 			}}
-			className={`${styles.autocomplete__option} ${
-				isHighlighted ? styles["autocomplete__option--active"] : ""
-			}`}
+			className={`${styles.option} ${isHighlighted ? styles.optionActive : ""}`}
 		>
 			{name}
 		</li>

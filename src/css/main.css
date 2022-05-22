@@ -1,5 +1,6 @@
 :root {
-	--highlight: aqua;
+	--primary: rgb(245, 245, 245);
+	--secondary: rgb(56, 56, 56);
 }
 
 * {

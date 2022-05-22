@@ -1,10 +1,12 @@
-.autocomplete__option {
+.option {
 	cursor: pointer;
-	border-radius: 0;
 	padding-left: 0.25em;
+	border-inline: 1px solid black;
+	border-bottom: 1px solid black;
 }
 
-.autocomplete__option:hover,
-.autocomplete__option--active {
-	background-color: var(--highlight);
+.option:hover,
+.optionActive {
+	background-color: var(--secondary);
+	color: white;
 }

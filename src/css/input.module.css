@@ -9,12 +9,13 @@
 }
 
 .input {
+	background-color: var(--primary);
 	padding-left: 0.25em;
 }
 
 .autocomplete {
 	list-style: none;
-	border-inline: 2px solid black;
+	background-color: var(--primary);
 }
 
 .hide {
