@@ -1,4 +1,5 @@
 .autocomplete__option {
+	cursor: pointer;
 	border-radius: 0;
 	padding-left: 0.25em;
 }
@@ -6,8 +7,4 @@
 .autocomplete__option:hover,
 .autocomplete__option--active {
 	background-color: var(--highlight);
-}
-
-.hide {
-	display: none;
 }

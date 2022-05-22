@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import store from "../redux/store";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { getUsers } from "../redux/users";
 import AutoComplete from "./AutoComplete";
+import styles from "../css/input.module.css";
 
 function Input() {
 	const [inputValue, setInputValue] = useState("");
@@ -11,101 +11,131 @@ function Input() {
 	const [autoCompleteSelected, setAutoCompleteSelected] = useState("");
 	const [hide, setHide] = useState(false);
 	const users = useSelector((state) => state.users);
-	const autoCompleteList = useRef();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		store.dispatch(getUsers());
+		dispatch(getUsers());
 	}, []);
 
 	useEffect(() => {
 		if (users.error) console.log(users.error);
-		if (!users.data || !inputValue) return setAutoComplete([]);
+		if (!users.data.length || !inputValue) return setAutoComplete([]);
 		setHide(false);
-		const matchingInput = new RegExp(`^${inputValue}`, "i");
 		setAutoComplete(
 			users.data.filter(({ name }) => {
-				return matchingInput.test(name) && name !== inputValue;
+				return (
+					name.toLowerCase().startsWith(inputValue.toLowerCase()) &&
+					name !== inputValue
+				);
 			})
 		);
 	}, [inputValue]);
 
-	const handleKeyboard = (e) => {
-		if (!autoComplete.length || !inputValue) return;
-		if (e.key === "ArrowDown") {
-			if (autoCompleteHighlight === autoComplete.length - 1) {
-				return setAutoCompleteHighlight(0);
-			}
-			return setAutoCompleteHighlight((prev) => prev + 1);
-		}
-		if (e.key === "ArrowUp") {
-			if (autoCompleteHighlight === 0 || autoCompleteHighlight === -1) {
-				return setAutoCompleteHighlight(autoComplete.length - 1);
-			}
-			return setAutoCompleteHighlight((prev) => prev - 1);
-		}
-		if (e.key === "Enter") {
-			if (autoCompleteHighlight !== -1) {
+	const defineHighlight = (action) => {
+		switch (action) {
+			case "reset": {
 				setInputValue(autoComplete[autoCompleteHighlight].name);
+				setAutoCompleteHighlight(-1);
 				setAutoCompleteSelected("");
-				return setAutoCompleteHighlight(-1);
+				break;
+			}
+			case "up": {
+				if (autoCompleteHighlight < 1) {
+					setAutoCompleteHighlight(autoComplete.length - 1);
+					break;
+				}
+				setAutoCompleteHighlight((prev) => prev - 1);
+				break;
+			}
+			case "down": {
+				if (autoCompleteHighlight === autoComplete.length - 1) {
+					setAutoCompleteHighlight(0);
+					break;
+				}
+				setAutoCompleteHighlight((prev) => prev + 1);
+				break;
+			}
+			default: {
+				break;
 			}
 		}
 	};
 
-	const handleClickOutside = (e) => {
-		console.log(autoCompleteList, e.target);
-		console.log(!autoCompleteList.current.contains(e.target));
-		if (
-			autoCompleteList.current &&
-			!autoCompleteList.current.contains(e.target)
-		) {
-			setHide(true);
+	const handleKeyboard = (e) => {
+		if (!autoComplete.length || !inputValue) return;
+		switch (e.key) {
+			case "ArrowDown":
+				return defineHighlight("down");
+			case "ArrowUp":
+				return defineHighlight("up");
+			case "Enter": {
+				if (autoCompleteHighlight === -1) return;
+				return defineHighlight("reset");
+			}
+			default:
+				return;
 		}
+		// if (e.key === "ArrowDown") {
+		// 	if (autoCompleteHighlight === autoComplete.length - 1) {
+		// 		return setAutoCompleteHighlight(0);
+		// 	}
+		// 	return setAutoCompleteHighlight((prev) => prev + 1);
+		// }
+		// if (e.key === "ArrowUp") {
+		// 	if (autoCompleteHighlight === 0 || autoCompleteHighlight === -1) {
+		// 		return setAutoCompleteHighlight(autoComplete.length - 1);
+		// 	}
+		// 	return setAutoCompleteHighlight((prev) => prev - 1);
+		// }
+		// if (e.key === "Enter") {
+		// 	if (autoCompleteHighlight !== -1) {
+		// 		setInputValue(autoComplete[autoCompleteHighlight].name);
+		// 		setAutoCompleteSelected("");
+		// 		return setAutoCompleteHighlight(-1);
+		// 	}
+		// }
 	};
 
 	useEffect(() => {
-		if (autoComplete.length) {
+		if (autoComplete.length && autoCompleteHighlight !== -1) {
 			setAutoCompleteSelected(autoComplete[autoCompleteHighlight].name);
 		}
 	}, [autoCompleteHighlight]);
 
-	useEffect(() => {
-		document.addEventListener("keydown", handleKeyboard);
-		document.addEventListener("click", handleClickOutside, true);
-		return () => {
-			document.removeEventListener("keydown", handleKeyboard);
-			document.removeEventListener("click", handleClickOutside, true);
-		};
-	}, [handleKeyboard]);
-
 	return (
 		<form
-			className={"form"}
+			className={styles.form}
 			onSubmit={(e) => e.preventDefault()}
 			autoComplete="off"
-			ref={autoCompleteList}
+			onBlur={(e) => {
+				console.log(e.target, e.currentTarget);
+				if (!e.currentTarget.contains(e.relatedTarget)) {
+					// setTimeout(() => setHide(true), 1000);
+					setHide(true);
+				}
+			}}
 		>
 			<input
-				className="input"
+				className={styles.input}
 				value={inputValue}
 				onChange={(e) => setInputValue(e.target.value)}
+				onKeyDown={handleKeyboard}
 				type="text"
-				placeholder="User"
+				placeholder="Username"
 			/>
 
-			<ul className={"autocomplete " + (hide ? "hide" : "")}>
-				{autoComplete
-					? autoComplete.map(({ name }) => {
-							return (
-								<AutoComplete
-									name={name}
-									setInputValue={setInputValue}
-									nameToHighlight={autoCompleteSelected}
-									key={name}
-								/>
-							);
-					  })
-					: null}
+			<ul className={`${styles.autocomplete} ${hide ? styles.hide : ""}`}>
+				{autoComplete &&
+					autoComplete.map(({ name }) => {
+						return (
+							<AutoComplete
+								name={name}
+								setInputValue={setInputValue}
+								isHighlighted={autoCompleteSelected === name ? true : false}
+								key={name}
+							/>
+						);
+					})}
 			</ul>
 		</form>
 	);
