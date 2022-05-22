@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUsers } from "../redux/users";
 import AutoComplete from "./AutoComplete";
 import styles from "../css/input.module.css";
+import useDetectOutsideClick from "../hooks/DetectOutsideClick";
 
 function Input() {
 	const [inputValue, setInputValue] = useState("");
 	const [autoComplete, setAutoComplete] = useState([]);
-	const [autoCompleteHighlight, setAutoCompleteHighlight] = useState({
+	const [autoCompleteSelected, setAutoCompleteSelected] = useState({
 		index: 0,
 		selected: false,
 	});
-	const [autoCompleteSelected, setAutoCompleteSelected] = useState("");
 	const [hide, setHide] = useState(false);
 	const users = useSelector((state) => state.users);
 	const dispatch = useDispatch();
+	const autoCompleteRef = useRef();
 
 	useEffect(() => {
 		dispatch(getUsers());
@@ -34,39 +35,33 @@ function Input() {
 		);
 	}, [inputValue]);
 
-	const defineHighlight = (action) => {
+	const defineSelected = (action) => {
 		switch (action) {
 			case "reset": {
-				setInputValue(autoComplete[autoCompleteHighlight.index].name);
-				setAutoCompleteHighlight({ index: 0, selected: false });
-				setAutoCompleteSelected("");
-				break;
+				setInputValue(autoComplete[autoCompleteSelected.index].name);
+				return setAutoCompleteSelected({ index: 0, selected: false });
 			}
 			case "up": {
-				if (autoCompleteHighlight.index === 0) {
-					setAutoCompleteHighlight({
+				if (autoCompleteSelected.index === 0) {
+					return setAutoCompleteSelected({
 						index: autoComplete.length - 1,
 						selected: true,
 					});
-					break;
 				}
-				setAutoCompleteHighlight(({ index }) => {
+				return setAutoCompleteSelected(({ index }) => {
 					return { index: index - 1, selected: true };
 				});
-				break;
 			}
 			case "down": {
-				if (autoCompleteHighlight.index === autoComplete.length - 1) {
-					setAutoCompleteHighlight({ index: 0, selected: true });
-					break;
+				if (autoCompleteSelected.index === autoComplete.length - 1) {
+					return setAutoCompleteSelected({ index: 0, selected: true });
 				}
-				setAutoCompleteHighlight(({ index }) => {
+				return setAutoCompleteSelected(({ index }) => {
 					return { index: index + 1, selected: true };
 				});
-				break;
 			}
 			default: {
-				break;
+				return;
 			}
 		}
 	};
@@ -75,32 +70,28 @@ function Input() {
 		if (!autoComplete.length || !inputValue) return;
 		switch (e.key) {
 			case "ArrowDown":
-				return defineHighlight("down");
+				return defineSelected("down");
 			case "ArrowUp":
-				return defineHighlight("up");
+				return defineSelected("up");
 			case "Enter": {
-				if (autoCompleteHighlight.selected === false) return;
-				return defineHighlight("reset");
+				if (autoCompleteSelected.selected === false) return;
+				return defineSelected("reset");
 			}
 			default:
 				return;
 		}
 	};
 
-	useEffect(() => {
-		if (autoComplete.length && autoCompleteHighlight.selected) {
-			setAutoCompleteSelected(autoComplete[autoCompleteHighlight.index].name);
-		}
-	}, [autoCompleteHighlight]);
+	useDetectOutsideClick(autoCompleteRef, () => {
+		setHide(true);
+	});
 
 	return (
 		<form
 			className={styles.form}
 			onSubmit={(e) => e.preventDefault()}
 			autoComplete="off"
-			onBlur={() => {
-				setTimeout(() => setHide(true), 100);
-			}}
+			ref={autoCompleteRef}
 		>
 			<input
 				className={styles.input}
@@ -118,7 +109,11 @@ function Input() {
 							<AutoComplete
 								name={name}
 								setInputValue={setInputValue}
-								isHighlighted={autoCompleteSelected === name ? true : false}
+								isHighlighted={
+									autoComplete[autoCompleteSelected.index].name === name
+										? true
+										: false
+								}
 								key={name}
 							/>
 						);
